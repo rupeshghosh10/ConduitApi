@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Conduit.Api.Mapping;
 using Conduit.Core.Services;
 using Conduit.Data;
 using Conduit.Service;
@@ -37,6 +38,8 @@ namespace Conduit.Api
             services.AddControllers();
 
             services.AddScoped<IUserService, UserService>();
+
+            services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddSwaggerGen(c =>
             {

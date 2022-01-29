@@ -18,7 +18,7 @@ namespace Conduit.Service
             _context = context;
         }
 
-        public Task<User> CreateUser()
+        public Task<User> CreateUser(User user)
         {
             throw new NotImplementedException();
         }

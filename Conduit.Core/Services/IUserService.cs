@@ -10,6 +10,6 @@ namespace Conduit.Core.Services
     {
         Task<IEnumerable<User>> GetAll();
         Task<User> GetById(int id);
-        Task<User> CreateUser();
+        Task<User> CreateUser(User user);
     }
 }
