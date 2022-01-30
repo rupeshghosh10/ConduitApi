@@ -6,6 +6,7 @@ using AutoMapper;
 using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
@@ -17,12 +18,18 @@ namespace Conduit.Api.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IPasswordManager _passwordManager;
+        private readonly ITokenManager _tokenManager;
 
-        public UserController(IUserService userService, IMapper mapper, IPasswordManager passwordManager)
+        public UserController(
+            IUserService userService,
+            IMapper mapper,
+            IPasswordManager passwordManager,
+            ITokenManager tokenManager)
         {
             _userService = userService;
             _mapper = mapper;
             _passwordManager = passwordManager;
+            _tokenManager = tokenManager;
         }
 
         [HttpPost]
@@ -42,16 +49,19 @@ namespace Conduit.Api.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<User>> Login([FromBody] UserLoginDto userDto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] UserLoginDto userLoginDto)
         {
             if (!ModelState.IsValid) return BadRequest();
             
-            var userInDb = await _userService.GetByEmail(userDto.Email);
+            var userInDb = await _userService.GetByEmail(userLoginDto.Email);
             if (userInDb == null) return NotFound();
             
-            if (_passwordManager.VerifyPassword(userDto.Password, userInDb.Password, userInDb.Salt))
+            if (_passwordManager.VerifyPassword(userLoginDto.Password, userInDb.Password, userInDb.Salt))
             {
-                return Ok(userInDb);
+                var userDto = _mapper.Map<UserDto>(userInDb);
+                userDto.Token = _tokenManager.GenerateToken(userInDb.Id);
+
+                return Ok(userDto);
             }
             else 
             {
@@ -60,6 +70,7 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
             var users = await _userService.GetAll();
