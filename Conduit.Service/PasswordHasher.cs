@@ -8,31 +8,31 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Conduit.Service
 {
-    public class PasswordHasher : IPasswordHasher
+    public class PasswordManager : IPasswordManager
     {
-        public byte[] GenerateSalt()
+        public string GenerateSalt()
         {
             byte[] salt = new byte[128 / 8];
             using (var rngCsp = RandomNumberGenerator.Create())
             {
                 rngCsp.GetNonZeroBytes(salt);
             }
-            return salt;
+            return Convert.ToBase64String(salt);
         }
 
-        public string HashPassword(string password)
+        public string HashPassword(string password, string salt)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
-                salt: GenerateSalt(),
+                salt: Convert.FromBase64String(salt),
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
         }
 
-        public bool VerifyPassword(string password)
+        public bool VerifyPassword(string password, string passwordInDb, string salt)
         {
-            throw new NotImplementedException();
+            return HashPassword(password, salt) == passwordInDb;
         }
     }
 }

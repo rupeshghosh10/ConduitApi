@@ -18,9 +18,11 @@ namespace Conduit.Service
             _context = context;
         }
 
-        public Task<User> CreateUser(User user)
+        public async Task<User> CreateUser(User user)
         {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public async Task<IEnumerable<User>> GetAll()
@@ -28,9 +30,9 @@ namespace Conduit.Service
             return await _context.Users.ToListAsync();
         }
 
-        public Task<User> GetById(int id)
+        public async Task<User> GetByEmail(string email)
         {
-            throw new NotImplementedException();
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }

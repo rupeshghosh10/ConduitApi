@@ -38,6 +38,7 @@ namespace Conduit.Api
             services.AddControllers();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordManager, PasswordManager>();
 
             services.AddAutoMapper(typeof(MappingProfile));
 

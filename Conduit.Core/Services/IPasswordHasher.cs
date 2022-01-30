@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Conduit.Core.Services
 {
-    public interface IPasswordHasher
+    public interface IPasswordManager
     {
-        string HashPassword(string password);
-        byte[] GenerateSalt();
-        bool VerifyPassword(string password);
+        string HashPassword(string password, string salt);
+        string GenerateSalt();
+        bool VerifyPassword(string password, string passwordInDb, string salt);
     }
 }
