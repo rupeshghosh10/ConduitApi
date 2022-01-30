@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Conduit.Api.Filters;
 using Conduit.Api.Mapping;
 using Conduit.Core.Services;
 using Conduit.Data;
@@ -66,6 +67,14 @@ namespace Conduit.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Conduit.Api", Version = "v1" });
+                c.OperationFilter<AuthHeaderOperationFilter>();
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    Description = "JWT Authorization header using the Bearer scheme."
+                });
             });
         }
 

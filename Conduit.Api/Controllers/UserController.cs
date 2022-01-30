@@ -7,12 +7,13 @@ using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {   
         private readonly IUserService _userService;
@@ -33,7 +34,9 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Register([FromBody] UserPostDto userDto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserDto>> Register([FromBody] UserPostDto userDto)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -44,11 +47,15 @@ namespace Conduit.Api.Controllers
             
             await _userService.CreateUser(user);
 
-            return Ok(user);
+            return Ok(_mapper.Map<UserDto>(user));
         }
 
         [HttpPost]
         [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserDto>> Login([FromBody] UserLoginDto userLoginDto)
         {
             if (!ModelState.IsValid) return BadRequest();
