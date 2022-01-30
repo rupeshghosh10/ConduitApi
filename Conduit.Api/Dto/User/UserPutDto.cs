@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Conduit.Api.Dto.User
 {
-    public class UserDto
+    public class UserPutDto
     {
-        public string Email { get; set; }
-
+        [Required]
+        [MaxLength(50)]
         public string Username { get; set; }
 
+        [MaxLength(200)]
         public string Bio { get; set; }
     }
 }

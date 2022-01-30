@@ -62,6 +62,8 @@ namespace Conduit.Api
             services.AddScoped<IPasswordManager, PasswordManager>();
             services.AddScoped<ITokenManager, TokenManager>();
 
+            services.AddHttpContextAccessor();
+
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddSwaggerGen(c =>

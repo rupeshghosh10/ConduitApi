@@ -8,6 +8,7 @@ namespace Conduit.Core.Services
 {
     public interface ITokenManager
     {
-        string GenerateToken(int id);
+        string GenerateToken(string email);
+        string GetUserEmail();
     }
 }

@@ -13,7 +13,9 @@ namespace Conduit.Api.Mapping
         public MappingProfile()
         {
             CreateMap<User, UserPostDto>().ReverseMap();
+            CreateMap<User, UserResponseDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserPutDto>().ReverseMap();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,13 +16,15 @@ namespace Conduit.Service
     public class TokenManager : ITokenManager
     {
         private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenManager(IConfiguration config)
+        public TokenManager(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GenerateToken(int id)
+        public string GenerateToken(string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -32,12 +35,17 @@ namespace Conduit.Service
             {
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = ceredential,
-                Subject = new ClaimsIdentity(new[] { new Claim("id", id.ToString()) })
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, email) })
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GetUserEmail()
+        {
+            return _httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == ClaimTypes.Email).Value;
         }
     }
 }

@@ -25,14 +25,32 @@ namespace Conduit.Service
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
         public async Task<User> GetByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        public async Task<User> GetById(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<bool> IsUniqueEmail(string email)
+        {
+            return await _context.Users.AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<bool> IsUniqueUsername(string username, string exception = "")
+        {
+            return await _context.Users.AnyAsync(x => x.Username == username && x.Username != exception);
+        }   
+
+        public async Task UpdateUser(User userOld, User userNew)
+        {
+            userOld.Username = userNew.Username;
+            userOld.Bio = userNew.Bio;
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -7,7 +7,6 @@ using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
@@ -15,7 +14,7 @@ namespace Conduit.Api.Controllers
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase
-    {   
+    {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IPasswordManager _passwordManager;
@@ -34,54 +33,93 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<UserDto>> Register([FromBody] UserPostDto userDto)
+        public async Task<ActionResult<UserResponseDto>> Register([FromBody] UserPostDto userPostDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-            var user = _mapper.Map<User>(userDto);
+            if (await _userService.IsUniqueEmail(userPostDto.Email)
+                || await _userService.IsUniqueUsername(userPostDto.Username))
+            {
+                return Conflict();
+            }
 
+            var user = _mapper.Map<User>(userPostDto);
             user.Salt = _passwordManager.GenerateSalt();
-            user.Password = _passwordManager.HashPassword(userDto.Password, user.Salt);
-            
+            user.Password = _passwordManager.HashPassword(userPostDto.Password, user.Salt);
+
             await _userService.CreateUser(user);
 
-            return Ok(_mapper.Map<UserDto>(user));
+            var userDto = _mapper.Map<UserResponseDto>(user);
+            userDto.Token = _tokenManager.GenerateToken(user.Email);
+
+            return Ok(userDto);
         }
 
         [HttpPost]
         [Route("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<UserDto>> Login([FromBody] UserLoginDto userLoginDto)
+        public async Task<ActionResult<UserResponseDto>> Login([FromBody] UserLoginDto userLoginDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
-            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var userInDb = await _userService.GetByEmail(userLoginDto.Email);
-            if (userInDb == null) return NotFound();
-            
+            if (userInDb == null)
+            {
+                return NotFound();
+            }
+
             if (_passwordManager.VerifyPassword(userLoginDto.Password, userInDb.Password, userInDb.Salt))
             {
-                var userDto = _mapper.Map<UserDto>(userInDb);
-                userDto.Token = _tokenManager.GenerateToken(userInDb.Id);
+                var userDto = _mapper.Map<UserResponseDto>(userInDb);
+                userDto.Token = _tokenManager.GenerateToken(userLoginDto.Email);
 
                 return Ok(userDto);
             }
-            else 
-            {
-                return Unauthorized();
-            }
+
+            return Unauthorized();
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<UserDto>> GetUser()
         {
-            var users = await _userService.GetAll();
-            return Ok(users);
+            var user = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<UserDto>(user));
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult> UpdateUser(UserPutDto userPutDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var userInDb = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+            if (userInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (await _userService.IsUniqueUsername(userPutDto.Username, userInDb.Username))
+            {
+                return Conflict();
+            }
+
+            await _userService.UpdateUser(userInDb, _mapper.Map<User>(userPutDto));
+
+            return NoContent();
         }
     }
 }
