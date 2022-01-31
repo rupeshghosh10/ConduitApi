@@ -7,8 +7,7 @@ namespace Conduit.Core.Services
 {
     public interface IPasswordManager
     {
-        string HashPassword(string password, string salt);
-        string GenerateSalt();
-        bool VerifyPassword(string password, string passwordInDb, string salt);
+        bool VerifyPassword(string password, string passwordInDb);
+        string GeneratePassword(string password);
     }
 }

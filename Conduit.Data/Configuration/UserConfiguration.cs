@@ -37,9 +37,6 @@ namespace Conduit.Data.Configuration
             builder.Property(u => u.Password)
                 .HasMaxLength(200);
 
-            builder.Property(u => u.Salt)
-                .HasMaxLength(200);
-
             builder.ToTable("Users");
         }
     }

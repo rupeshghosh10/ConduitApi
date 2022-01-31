@@ -47,8 +47,7 @@ namespace Conduit.Api.Controllers
             }
 
             var user = _mapper.Map<User>(userPostDto);
-            user.Salt = _passwordManager.GenerateSalt();
-            user.Password = _passwordManager.HashPassword(userPostDto.Password, user.Salt);
+            user.Password = _passwordManager.GeneratePassword(userPostDto.Password);
 
             await _userService.CreateUser(user);
 
@@ -73,7 +72,7 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            if (_passwordManager.VerifyPassword(userLoginDto.Password, userInDb.Password, userInDb.Salt))
+            if (_passwordManager.VerifyPassword(userLoginDto.Password, userInDb.Password))
             {
                 var userDto = _mapper.Map<UserResponseDto>(userInDb);
                 userDto.Token = _tokenManager.GenerateToken(userLoginDto.Email);
@@ -99,7 +98,7 @@ namespace Conduit.Api.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> UpdateUser(UserPutDto userPutDto)
+        public async Task<ActionResult> UpdateUser([FromBody] UserPutDto userPutDto)
         {
             if (!ModelState.IsValid)
             {
@@ -120,6 +119,32 @@ namespace Conduit.Api.Controllers
             await _userService.UpdateUser(userInDb, _mapper.Map<User>(userPutDto));
 
             return NoContent();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("resetpassword")]
+        public async Task<ActionResult> ChangePassword([FromBody] UserResetPasswordDto userResetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var userInDb = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+            if (userInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (_passwordManager.VerifyPassword(userResetPasswordDto.OldPassword, userInDb.Password))
+            {
+                string password = _passwordManager.GeneratePassword(userResetPasswordDto.NewPassword);
+                await _userService.UpdatePassword(userInDb, password);
+                return NoContent();
+            }
+
+            return Forbid();
         }
     }
 }

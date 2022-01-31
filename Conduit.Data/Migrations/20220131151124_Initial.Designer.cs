@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Conduit.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220129164628_AddPasswordToUserTable")]
-    partial class AddPasswordToUserTable
+    [Migration("20220131151124_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,10 +41,6 @@ namespace Conduit.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Salt")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 

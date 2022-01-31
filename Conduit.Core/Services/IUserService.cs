@@ -14,5 +14,6 @@ namespace Conduit.Core.Services
         Task<bool> IsUniqueEmail(string email);
         Task<bool> IsUniqueUsername(string username, string exception = "");
         Task UpdateUser(User userOld, User userNew);
+        Task UpdatePassword(User user, string newPassword);
     }
 }

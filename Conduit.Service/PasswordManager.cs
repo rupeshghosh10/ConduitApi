@@ -10,7 +10,19 @@ namespace Conduit.Service
 {
     public class PasswordManager : IPasswordManager
     {
-        public string GenerateSalt()
+        public string GeneratePassword(string password)
+        {
+            string salt = GenerateSalt();
+            return HashPassword(password, salt) + salt;
+        }
+
+        public bool VerifyPassword(string password, string passwordInDb)
+        {
+            string salt = passwordInDb.Substring(passwordInDb.Length - 24);
+            return HashPassword(password, salt) + salt == passwordInDb;
+        }
+
+        private string GenerateSalt()
         {
             byte[] salt = new byte[128 / 8];
             using (var rngCsp = RandomNumberGenerator.Create())
@@ -20,7 +32,7 @@ namespace Conduit.Service
             return Convert.ToBase64String(salt);
         }
 
-        public string HashPassword(string password, string salt)
+        private string HashPassword(string password, string salt)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
@@ -28,11 +40,6 @@ namespace Conduit.Service
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
-        }
-
-        public bool VerifyPassword(string password, string passwordInDb, string salt)
-        {
-            return HashPassword(password, salt) == passwordInDb;
         }
     }
 }

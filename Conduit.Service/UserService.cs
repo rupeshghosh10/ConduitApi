@@ -43,7 +43,13 @@ namespace Conduit.Service
         public async Task<bool> IsUniqueUsername(string username, string exception = "")
         {
             return await _context.Users.AnyAsync(x => x.Username == username && x.Username != exception);
-        }   
+        }
+
+        public async Task UpdatePassword(User user, string newPassword)
+        {
+            user.Password = newPassword;
+            await _context.SaveChangesAsync();
+        }
 
         public async Task UpdateUser(User userOld, User userNew)
         {

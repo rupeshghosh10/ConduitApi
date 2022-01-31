@@ -42,10 +42,6 @@ namespace Conduit.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("Salt")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)

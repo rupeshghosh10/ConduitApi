@@ -16,7 +16,5 @@ namespace Conduit.Core.Models
         public string Bio { get; set; }
 
         public string Password { get; set; }
-
-        public string Salt { get; set; }
     }
 }
