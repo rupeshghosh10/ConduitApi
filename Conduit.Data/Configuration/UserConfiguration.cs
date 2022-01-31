@@ -15,6 +15,7 @@ namespace Conduit.Data.Configuration
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
+                .IsRequired()
                 .UseIdentityColumn();
 
             builder.Property(u => u.Username)
@@ -35,6 +36,7 @@ namespace Conduit.Data.Configuration
                 .HasMaxLength(200);
 
             builder.Property(u => u.Password)
+                .IsRequired()
                 .HasMaxLength(200);
 
             builder.ToTable("Users");

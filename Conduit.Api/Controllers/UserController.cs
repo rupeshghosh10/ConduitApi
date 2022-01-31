@@ -141,6 +141,7 @@ namespace Conduit.Api.Controllers
             {
                 string password = _passwordManager.GeneratePassword(userResetPasswordDto.NewPassword);
                 await _userService.UpdatePassword(userInDb, password);
+                
                 return NoContent();
             }
 

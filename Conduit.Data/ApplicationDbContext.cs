@@ -11,6 +11,7 @@ namespace Conduit.Data
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Article> Articles { get; set; }
 
         public ApplicationDbContext(DbContextOptions options)
             : base(options)
@@ -20,6 +21,7 @@ namespace Conduit.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new ArticleConfiguration());
         }
     }
 }
