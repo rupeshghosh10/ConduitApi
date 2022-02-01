@@ -12,6 +12,7 @@ namespace Conduit.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Article> Articles { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public ApplicationDbContext(DbContextOptions options)
             : base(options)
@@ -22,6 +23,7 @@ namespace Conduit.Data
         {
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new ArticleConfiguration());
+            builder.ApplyConfiguration(new CommentConfiguration());
         }
     }
 }

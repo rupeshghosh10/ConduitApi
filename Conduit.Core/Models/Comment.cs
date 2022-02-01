@@ -5,15 +5,9 @@ using System.Threading.Tasks;
 
 namespace Conduit.Core.Models
 {
-    public class Article
+    public class Comment
     {
         public int Id { get; set; }
-
-        public string Slug { get; set; }
-
-        public string Title { get; set; }
-
-        public string Description { get; set; }
 
         public string Body { get; set; }
 
@@ -23,6 +17,6 @@ namespace Conduit.Core.Models
 
         public User Author { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
+        public Article Article { get; set; }
     }
 }

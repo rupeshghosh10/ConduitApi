@@ -38,6 +38,10 @@ namespace Conduit.Data.Configuration
             builder.Property(u => u.Password)
                 .IsRequired()
                 .HasMaxLength(200);
+            
+            builder.HasMany(u => u.Followers)
+                .WithMany(u => u.Following)
+                .UsingEntity(x => x.ToTable("Followers"));
 
             builder.ToTable("Users");
         }

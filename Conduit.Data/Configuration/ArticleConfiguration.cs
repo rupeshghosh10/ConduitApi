@@ -39,8 +39,8 @@ namespace Conduit.Data.Configuration
 
             builder.HasOne(a => a.Author)
                 .WithMany(u => u.Articles)
-                .HasForeignKey(u => u.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
 
             builder.ToTable("Articles");
         }

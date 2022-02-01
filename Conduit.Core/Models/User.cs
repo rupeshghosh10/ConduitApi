@@ -17,6 +17,12 @@ namespace Conduit.Core.Models
 
         public string Password { get; set; }
 
-        public IEnumerable<Article> Articles { get; set; }
+        public ICollection<Article> Articles { get; set; }
+
+        public ICollection<User> Followers { get; set; }
+
+        public ICollection<User> Following { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
     }
 }

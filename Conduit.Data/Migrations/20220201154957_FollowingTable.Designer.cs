@@ -3,6 +3,7 @@ using System;
 using Conduit.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Conduit.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220201154957_FollowingTable")]
+    partial class FollowingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,40 +67,6 @@ namespace Conduit.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Articles", (string)null);
-                });
-
-            modelBuilder.Entity("Conduit.Core.Models.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Conduit.Core.Models.User", b =>
@@ -165,25 +133,6 @@ namespace Conduit.Data.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Conduit.Core.Models.Comment", b =>
-                {
-                    b.HasOne("Conduit.Core.Models.Article", "Article")
-                        .WithMany("Comments")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Conduit.Core.Models.User", "Author")
-                        .WithMany("Comments")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
-
-                    b.Navigation("Author");
-                });
-
             modelBuilder.Entity("UserUser", b =>
                 {
                     b.HasOne("Conduit.Core.Models.User", null)
@@ -199,16 +148,9 @@ namespace Conduit.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Conduit.Core.Models.Article", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
             modelBuilder.Entity("Conduit.Core.Models.User", b =>
                 {
                     b.Navigation("Articles");
-
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
