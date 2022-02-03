@@ -18,6 +18,12 @@ namespace Conduit.Service
             _context = context;
         }
 
+        public async Task AddFollower(User currentUser, User followedUser)
+        {
+            currentUser.Following.Add(followedUser);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<User> CreateUser(User user)
         {
             await _context.Users.AddAsync(user);
@@ -30,9 +36,19 @@ namespace Conduit.Service
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
+        public async Task<User> GetByEmailIncludeFollowing(string email)
+        {
+            return await _context.Users.Include(x => x.Following).FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<User> GetById(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<User> GetByUsername(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
         public async Task<bool> IsUniqueEmail(string email)

@@ -17,12 +17,12 @@ namespace Conduit.Core.Models
 
         public string Password { get; set; }
 
-        public ICollection<Article> Articles { get; set; }
+        public virtual ICollection<Article> Articles { get; set; }
 
-        public ICollection<User> Followers { get; set; }
+        public virtual ICollection<User> Followers { get; set; }
 
-        public ICollection<User> Following { get; set; }
+        public virtual ICollection<User> Following { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

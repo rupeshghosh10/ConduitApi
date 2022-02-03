@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Conduit.Api.Dto.Profile;
 using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 
@@ -16,6 +17,8 @@ namespace Conduit.Api.Mapping
             CreateMap<User, UserResponseDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserPutDto>().ReverseMap();
+
+            CreateMap<User, ProfileDto>().ReverseMap();
         }
     }
 }
