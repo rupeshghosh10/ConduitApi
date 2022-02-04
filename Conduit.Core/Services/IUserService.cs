@@ -9,7 +9,6 @@ namespace Conduit.Core.Services
     public interface IUserService
     {
         Task<User> GetByEmail(string email);
-        Task<User> GetByEmailIncludeFollowing(string email);
         Task<User> GetById(int id);
         Task<User> GetByUsername(string username);
         Task<User> CreateUser(User user);
@@ -18,5 +17,6 @@ namespace Conduit.Core.Services
         Task UpdateUser(User userOld, User userNew);
         Task UpdatePassword(User user, string newPassword);
         Task AddFollower(User currentUser, User followedUser);
+        Task DeleteFollower(User currentUser, User followedUser);
     }
 }

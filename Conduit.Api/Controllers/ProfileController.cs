@@ -36,6 +36,16 @@ namespace Conduit.Api.Controllers
 
             var profileDto = _mapper.Map<ProfileDto>(userInDb);
 
+            try
+            {
+                var currentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+                if (userInDb.Followers.Contains(currentUser))
+                {
+                    profileDto.IsFollowing = true;
+                }
+            }
+            catch {}
+
             return Ok(profileDto);
         }
 
@@ -50,14 +60,42 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            var curentUser = await _userService.GetByEmailIncludeFollowing(_tokenManager.GetUserEmail());
+            var curentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+
+            if (curentUser.Following.Contains(followedUser))
+            {
+                return Conflict();
+            }
 
             await _userService.AddFollower(curentUser, followedUser);
-            
+
             var profileDto = _mapper.Map<ProfileDto>(followedUser);
-            profileDto.Following = true;
+            profileDto.IsFollowing = true;
 
             return Ok(profileDto);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("{username}/follow")]
+        public async Task<ActionResult> UnfollowProfile([FromRoute] string username)
+        {
+            var followedUser = await _userService.GetByUsername(username);
+            if (followedUser == null)
+            {
+                return NotFound();
+            }
+
+            var curentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+
+            if (!curentUser.Following.Contains(followedUser))
+            {
+                return Conflict();
+            }
+
+            await _userService.DeleteFollower(curentUser, followedUser);
+
+            return NoContent();
         }
     }
 }

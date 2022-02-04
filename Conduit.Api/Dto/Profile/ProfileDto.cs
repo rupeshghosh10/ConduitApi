@@ -11,6 +11,6 @@ namespace Conduit.Api.Dto.Profile
 
         public string Bio { get; set; }
 
-        public bool Following { get; set; }
+        public bool IsFollowing { get; set; }
     }
 }

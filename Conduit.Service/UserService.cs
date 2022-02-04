@@ -31,14 +31,15 @@ namespace Conduit.Service
             return user;
         }
 
+        public async Task DeleteFollower(User currentUser, User followedUser)
+        {
+            currentUser.Following.Remove(followedUser);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<User> GetByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-        }
-
-        public async Task<User> GetByEmailIncludeFollowing(string email)
-        {
-            return await _context.Users.Include(x => x.Following).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetById(int id)

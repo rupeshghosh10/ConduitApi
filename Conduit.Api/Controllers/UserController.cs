@@ -88,10 +88,6 @@ namespace Conduit.Api.Controllers
         public async Task<ActionResult<UserDto>> GetUser()
         {
             var user = await _userService.GetByEmail(_tokenManager.GetUserEmail());
-            if (user == null)
-            {
-                return NotFound();
-            }
 
             return Ok(_mapper.Map<UserDto>(user));
         }
@@ -106,10 +102,6 @@ namespace Conduit.Api.Controllers
             }
 
             var userInDb = await _userService.GetByEmail(_tokenManager.GetUserEmail());
-            if (userInDb == null)
-            {
-                return NotFound();
-            }
 
             if (await _userService.IsUniqueUsername(userPutDto.Username, userInDb.Username))
             {
@@ -132,15 +124,11 @@ namespace Conduit.Api.Controllers
             }
 
             var userInDb = await _userService.GetByEmail(_tokenManager.GetUserEmail());
-            if (userInDb == null)
-            {
-                return NotFound();
-            }
 
             if (_passwordManager.VerifyPassword(userResetPasswordDto.OldPassword, userInDb.Password))
             {
-                string password = _passwordManager.GeneratePassword(userResetPasswordDto.NewPassword);
-                await _userService.UpdatePassword(userInDb, password);
+                string newPassword = _passwordManager.GeneratePassword(userResetPasswordDto.NewPassword);
+                await _userService.UpdatePassword(userInDb, newPassword);
                 
                 return NoContent();
             }

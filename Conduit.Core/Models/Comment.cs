@@ -15,8 +15,8 @@ namespace Conduit.Core.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public User Author { get; set; }
+        public virtual User Author { get; set; }
 
-        public Article Article { get; set; }
+        public virtual Article Article { get; set; }
     }
 }
