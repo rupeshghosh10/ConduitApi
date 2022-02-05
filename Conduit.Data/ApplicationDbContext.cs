@@ -24,6 +24,7 @@ namespace Conduit.Data
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new ArticleConfiguration());
             builder.ApplyConfiguration(new CommentConfiguration());
+            builder.ApplyConfiguration(new TagConfiguration());
         }
     }
 }
