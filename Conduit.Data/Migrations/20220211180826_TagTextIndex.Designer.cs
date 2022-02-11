@@ -3,6 +3,7 @@ using System;
 using Conduit.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Conduit.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220211180826_TagTextIndex")]
+    partial class TagTextIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,11 +41,11 @@ namespace Conduit.Data.Migrations
 
             modelBuilder.Entity("Conduit.Core.Models.Article", b =>
                 {
-                    b.Property<int>("ArticleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ArticleId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AuthorId")
                         .HasColumnType("integer");
@@ -72,7 +74,7 @@ namespace Conduit.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ArticleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
@@ -84,16 +86,16 @@ namespace Conduit.Data.Migrations
 
             modelBuilder.Entity("Conduit.Core.Models.Comment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("CommentId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ArticleId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AuthorUserId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Body")
@@ -107,29 +109,29 @@ namespace Conduit.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("CommentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
 
-                    b.HasIndex("AuthorUserId");
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Conduit.Core.Models.Tag", b =>
                 {
-                    b.Property<int>("TagId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TagId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.HasKey("TagId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Text")
                         .IsUnique();
@@ -139,11 +141,11 @@ namespace Conduit.Data.Migrations
 
             modelBuilder.Entity("Conduit.Core.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
                         .HasMaxLength(200)
@@ -164,7 +166,7 @@ namespace Conduit.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -177,15 +179,15 @@ namespace Conduit.Data.Migrations
 
             modelBuilder.Entity("UserUser", b =>
                 {
-                    b.Property<int>("FollowersUserId")
+                    b.Property<int>("FollowersId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FollowingUserId")
+                    b.Property<int>("FollowingId")
                         .HasColumnType("integer");
 
-                    b.HasKey("FollowersUserId", "FollowingUserId");
+                    b.HasKey("FollowersId", "FollowingId");
 
-                    b.HasIndex("FollowingUserId");
+                    b.HasIndex("FollowingId");
 
                     b.ToTable("Followers", (string)null);
                 });
@@ -226,7 +228,7 @@ namespace Conduit.Data.Migrations
 
                     b.HasOne("Conduit.Core.Models.User", "Author")
                         .WithMany("Comments")
-                        .HasForeignKey("AuthorUserId")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -239,13 +241,13 @@ namespace Conduit.Data.Migrations
                 {
                     b.HasOne("Conduit.Core.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("FollowersUserId")
+                        .HasForeignKey("FollowersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Conduit.Core.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("FollowingUserId")
+                        .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

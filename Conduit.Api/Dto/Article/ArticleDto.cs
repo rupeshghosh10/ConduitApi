@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Conduit.Api.Dto.Profile;
+using Conduit.Api.Dto.Tag;
+using Conduit.Api.Dto.User;
 
-namespace Conduit.Core.Models
+namespace Conduit.Api.Dto.Article
 {
-    public class Article
+    public class ArticleDto
     {
-        public int ArticleId { get; set; }
-
         public string Slug { get; set; }
 
         public string Title { get; set; }
@@ -21,12 +22,8 @@ namespace Conduit.Core.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int AuthorId { get; set; }
+        public virtual UserDto Author { get; set; }
 
-        public virtual User Author { get; set; }
-
-        public virtual ICollection<Comment> Comments { get; set; }
-
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual IEnumerable<TagDto> Tags { get; set; }
     }
 }

@@ -12,9 +12,9 @@ namespace Conduit.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(u => u.Id);
+            builder.HasKey(u => u.UserId);
 
-            builder.Property(u => u.Id)
+            builder.Property(u => u.UserId)
                 .IsRequired()
                 .UseIdentityColumn();
 

@@ -12,9 +12,9 @@ namespace Conduit.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Article> builder)
         {
-            builder.HasKey(a => a.Id);
+            builder.HasKey(a => a.ArticleId);
 
-            builder.Property(a => a.Id)
+            builder.Property(a => a.ArticleId)
                 .UseIdentityColumn();
 
             builder.Property(a => a.Slug)
@@ -39,6 +39,7 @@ namespace Conduit.Data.Configuration
 
             builder.HasOne(a => a.Author)
                 .WithMany(u => u.Articles)
+                .HasForeignKey(x => x.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 

@@ -20,11 +20,7 @@ namespace Conduit.Api.Controllers
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
 
-        public UserController(
-            IUserService userService,
-            IMapper mapper,
-            IPasswordManager passwordManager,
-            ITokenManager tokenManager)
+        public UserController(IUserService userService, IMapper mapper, IPasswordManager passwordManager, ITokenManager tokenManager)
         {
             _userService = userService;
             _mapper = mapper;
@@ -52,7 +48,7 @@ namespace Conduit.Api.Controllers
             await _userService.CreateUser(user);
 
             var userDto = _mapper.Map<UserResponseDto>(user);
-            userDto.Token = _tokenManager.GenerateToken(user.Email);
+            userDto.Token = _tokenManager.GenerateToken(user.Email, user.UserId);
 
             return Ok(userDto);
         }
@@ -75,7 +71,7 @@ namespace Conduit.Api.Controllers
             if (_passwordManager.VerifyPassword(userLoginDto.Password, userInDb.Password))
             {
                 var userDto = _mapper.Map<UserResponseDto>(userInDb);
-                userDto.Token = _tokenManager.GenerateToken(userLoginDto.Email);
+                userDto.Token = _tokenManager.GenerateToken(userLoginDto.Email, userInDb.UserId);
 
                 return Ok(userDto);
             }

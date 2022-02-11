@@ -24,7 +24,7 @@ namespace Conduit.Service
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GenerateToken(string email)
+        public string GenerateToken(string email, int id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -35,7 +35,7 @@ namespace Conduit.Service
             {
                 Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = ceredential,
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, email) })
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.NameIdentifier, id.ToString()) })
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -46,6 +46,11 @@ namespace Conduit.Service
         public string GetUserEmail()
         {
             return _httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == ClaimTypes.Email).Value;
+        }
+
+        public int GetUserId()
+        {
+            return Convert.ToInt32(_httpContextAccessor.HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
         }
     }
 }

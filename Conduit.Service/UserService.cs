@@ -44,7 +44,7 @@ namespace Conduit.Service
 
         public async Task<User> GetById(int id)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
         }
 
         public async Task<User> GetByUsername(string username)

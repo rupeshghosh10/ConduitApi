@@ -62,6 +62,7 @@ namespace Conduit.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordManager, PasswordManager>();
             services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<IArticleManager, ArticleManager>();
 
             services.AddHttpContextAccessor();
 

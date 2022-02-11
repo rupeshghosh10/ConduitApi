@@ -6,10 +6,8 @@ using Conduit.Core.Models;
 
 namespace Conduit.Core.Services
 {
-    public interface ITokenManager
+    public interface IArticleManager
     {
-        string GenerateToken(string email, int id);
-        string GetUserEmail();
-        int GetUserId();
+        Task<Article> CreateArticle(Article article, int authorId);
     }
 }

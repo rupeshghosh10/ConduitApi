@@ -7,7 +7,7 @@ namespace Conduit.Core.Models
 {
     public class Tag
     {
-        public int Id { get; set; }
+        public int TagId { get; set; }
 
         public string Text { get; set; }
 
