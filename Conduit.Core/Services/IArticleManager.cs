@@ -10,6 +10,6 @@ namespace Conduit.Core.Services
     {
         Task<Article> CreateArticle(Article article, int authorId);
 
-        Task<ICollection<Article>> GetArticles();
+        Task<ICollection<Article>> GetArticles(string tag, string author, int limit, int offset);
     }
 }

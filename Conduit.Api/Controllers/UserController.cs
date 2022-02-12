@@ -20,7 +20,11 @@ namespace Conduit.Api.Controllers
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
 
-        public UserController(IUserService userService, IMapper mapper, IPasswordManager passwordManager, ITokenManager tokenManager)
+        public UserController(
+            IUserService userService,
+            IMapper mapper,
+            IPasswordManager passwordManager,
+            ITokenManager tokenManager)
         {
             _userService = userService;
             _mapper = mapper;

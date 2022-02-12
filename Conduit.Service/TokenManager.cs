@@ -35,11 +35,15 @@ namespace Conduit.Service
             {
                 Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = ceredential,
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.NameIdentifier, id.ToString()) })
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString())
+                })
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            
+
             return tokenHandler.WriteToken(token);
         }
 

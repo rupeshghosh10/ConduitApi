@@ -54,9 +54,15 @@ namespace Conduit.Service
             return article;
         }
 
-        public async Task<ICollection<Article>> GetArticles()
+        public async Task<ICollection<Article>> GetArticles(string tag, string author, int limit, int offset)
         {
-            return await _context.Articles.ToListAsync();
+            return await _context.Articles
+                .OrderBy(x => x.ArticleId)
+                .Skip(offset)
+                .Take(limit)
+                .Where(x => x.Tags.Any(x => tag == "" ? true : x.Text == tag))
+                .Where(x => author == "" ? true : x.Author.Username == author)
+                .ToListAsync();
         }
     }
 }
