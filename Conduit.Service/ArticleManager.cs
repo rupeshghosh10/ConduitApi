@@ -40,12 +40,23 @@ namespace Conduit.Service
             await _context.Articles.AddAsync(article);
             await _context.SaveChangesAsync();
 
-            article.Slug = $"{article.Title.Replace(" ", "-")}-{article.ArticleId}";
-            await _context.SaveChangesAsync();
-
-            article.Author = await _context.Users.FindAsync(authorId);
+            try
+            {
+                article.Slug = $"{article.Title.Replace(" ", "-").ToLower()}";
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                article.Slug = $"{article.Title.Replace(" ", "-").ToLower()}-{article.ArticleId}";
+                await _context.SaveChangesAsync();
+            }
 
             return article;
+        }
+
+        public async Task<ICollection<Article>> GetArticles()
+        {
+            return await _context.Articles.ToListAsync();
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Conduit.Api.Dto.Article;
 using Conduit.Api.Dto.Profile;
-using Conduit.Api.Dto.Tag;
 using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 
@@ -22,10 +21,14 @@ namespace Conduit.Api.Mapping
 
             CreateMap<User, ProfileDto>().ReverseMap();
 
+            CreateMap<string, Tag>()
+                .ConstructUsing(x => new Tag { Text = x })
+                .ReverseMap()
+                .ConstructUsing(x => x.Text);
+
             CreateMap<Article, ArticleDto>().ReverseMap();
             CreateMap<Article, ArticlePostDto>().ReverseMap();
-
-            CreateMap<Tag, TagDto>().ReverseMap();
+            CreateMap<Article, ArticleFeedDto>().ReverseMap();
         }
     }
 }

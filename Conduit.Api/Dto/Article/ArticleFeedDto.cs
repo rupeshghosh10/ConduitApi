@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Conduit.Api.Dto.Profile;
 using Conduit.Api.Dto.User;
 
 namespace Conduit.Api.Dto.Article
 {
-    public class ArticleDto
+    public class ArticleFeedDto
     {
         public string Slug { get; set; }
 
@@ -21,6 +20,8 @@ namespace Conduit.Api.Dto.Article
 
         public DateTime? UpdatedAt { get; set; }
 
-        public IEnumerable<string> Tags { get; set; }
+        public UserDto Author { get; set; }
+
+        public virtual IEnumerable<string> Tags { get; set; }
     }
 }

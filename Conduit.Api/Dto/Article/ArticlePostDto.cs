@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Conduit.Api.Dto.Tag;
 
 namespace Conduit.Api.Dto.Article
 {
@@ -21,6 +20,6 @@ namespace Conduit.Api.Dto.Article
         [MaxLength(10000)]
         public string Body { get; set; }
 
-        public IEnumerable<TagDto> Tags { get; set; }
+        public IEnumerable<string> Tags { get; set; }
     }
 }

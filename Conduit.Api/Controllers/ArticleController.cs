@@ -40,5 +40,16 @@ namespace Conduit.Api.Controllers
 
             return Ok(_mapper.Map<ArticleDto>(articleInDb));
         }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles()
+        {
+
+            var articles = await _articleManager.GetArticles();
+            var articlesDto = articles.Select(x => _mapper.Map<ArticleFeedDto>(x));
+
+            return Ok(articlesDto);
+        }
     }
 }
