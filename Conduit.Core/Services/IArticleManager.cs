@@ -9,7 +9,7 @@ namespace Conduit.Core.Services
     public interface IArticleManager
     {
         Task<Article> CreateArticle(Article article, int authorId);
-
         Task<ICollection<Article>> GetArticles(string tag, string author, int limit, int offset);
+        Task<Article> GetArticle(string slug);
     }
 }

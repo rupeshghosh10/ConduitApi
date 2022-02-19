@@ -43,16 +43,34 @@ namespace Conduit.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles(
+        public async Task<ActionResult<IEnumerable<ArticleFeedDto>>> GetArticles(
             [FromQuery] string tag = "",
             [FromQuery] string author = "",
             [FromQuery] int limit = 10,
             [FromQuery] int offset = 0)
         {
             var articles = await _articleManager.GetArticles(tag, author, limit, offset);
+            if (articles.Count == 0) 
+            {
+                return NotFound();
+            }
+
             var articlesDto = articles.Select(x => _mapper.Map<ArticleFeedDto>(x));
 
             return Ok(articlesDto);
+        }
+
+        [HttpGet]
+        [Route("{slug}")]
+        public async Task<ActionResult<ArticleFeedDto>> GetArticle([FromRoute] string slug)
+        {
+            var articleInDb = await _articleManager.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<ArticleFeedDto>(articleInDb));
         }
     }
 }
