@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Conduit.Service
 {
-    public class ArticleManager : IArticleManager
+    public class ArticleService : IArticleService
     {
         private readonly ApplicationDbContext _context;
 
-        public ArticleManager(ApplicationDbContext context)
+        public ArticleService(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -75,6 +75,18 @@ namespace Conduit.Service
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
+        }
+
+        public async Task<Article> UpdateArticle(Article oldArticle, Article newArticle)
+        {
+            oldArticle.Title = newArticle.Title;
+            oldArticle.Description = newArticle.Description;
+            oldArticle.Body = newArticle.Body;
+            oldArticle.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return oldArticle;
         }
     }
 }

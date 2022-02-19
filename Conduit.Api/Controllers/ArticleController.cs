@@ -17,60 +17,86 @@ namespace Conduit.Api.Controllers
     {
         private readonly ITokenManager _tokenManager;
         private readonly IMapper _mapper;
-        private readonly IArticleManager _articleManager;
+        private readonly IArticleService _articleService;
 
-        public ArticleController(ITokenManager tokenManager, IMapper mapper, IArticleManager articleManager)
+        public ArticleController(ITokenManager tokenManager, IMapper mapper, IArticleService articleService)
         {
             _tokenManager = tokenManager;
             _mapper = mapper;
-            _articleManager = articleManager;
+            _articleService = articleService;
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<ArticleDto>> CreateArticle([FromBody] ArticlePostDto articlePostDto)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return Unauthorized();
             }
 
             var article = _mapper.Map<Article>(articlePostDto);
-            var articleInDb = await _articleManager.CreateArticle(article, _tokenManager.GetUserId());     
+            var articleInDb = await _articleService.CreateArticle(article, _tokenManager.GetUserId());
 
             return Ok(_mapper.Map<ArticleDto>(articleInDb));
         }
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<IEnumerable<ArticleFeedDto>>> GetArticles(
+        public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles(
             [FromQuery] string tag = "",
             [FromQuery] string author = "",
             [FromQuery] int limit = 10,
             [FromQuery] int offset = 0)
         {
-            var articles = await _articleManager.GetArticles(tag, author, limit, offset);
-            if (articles.Count == 0) 
+            var articles = await _articleService.GetArticles(tag, author, limit, offset);
+            if (articles.Count == 0)
             {
                 return NotFound();
             }
 
-            var articlesDto = articles.Select(x => _mapper.Map<ArticleFeedDto>(x));
+            var articlesDto = articles.Select(x => _mapper.Map<ArticleDto>(x));
 
             return Ok(articlesDto);
         }
 
         [HttpGet]
         [Route("{slug}")]
-        public async Task<ActionResult<ArticleFeedDto>> GetArticle([FromRoute] string slug)
+        public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] string slug)
         {
-            var articleInDb = await _articleManager.GetArticle(slug);
+            var articleInDb = await _articleService.GetArticle(slug);
             if (articleInDb == null)
             {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<ArticleFeedDto>(articleInDb));
+            return Ok(_mapper.Map<ArticleDto>(articleInDb));
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("{slug}")]
+        public async Task<ActionResult<ArticleDto>> UpdateArticle([FromBody] ArticlePutDto articlePutDto, [FromRoute] string slug)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var articleInDb = await _articleService.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (_tokenManager.GetUserId() != articleInDb.AuthorId)
+            {
+                return Forbid();
+            }
+
+            var newArticle = await _articleService.UpdateArticle(articleInDb, _mapper.Map<Article>(articlePutDto));
+
+            return Ok(_mapper.Map<ArticleDto>(newArticle));
         }
     }
 }
