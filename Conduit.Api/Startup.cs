@@ -35,10 +35,9 @@ namespace Conduit.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseLazyLoadingProxies()
-                .UseNpgsql(Configuration.GetConnectionString("ConduitDb"),
-                    x => x.MigrationsAssembly("Conduit.Data")));
+            services.AddDbContext<ApplicationDbContext>(options => options
+                .UseLazyLoadingProxies()
+                .UseNpgsql(Configuration.GetConnectionString("ConduitDb"), x => x.MigrationsAssembly("Conduit.Data")));
 
             services.AddControllers();
 
@@ -63,6 +62,7 @@ namespace Conduit.Api
             services.AddScoped<IPasswordManager, PasswordManager>();
             services.AddScoped<ITokenManager, TokenManager>();
             services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<ITagService, TagService>();
 
             services.AddHttpContextAccessor();
 
