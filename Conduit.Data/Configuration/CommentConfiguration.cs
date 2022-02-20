@@ -27,11 +27,13 @@ namespace Conduit.Data.Configuration
 
             builder.HasOne(c => c.Author)
                 .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             builder.HasOne(c => c.Article)
                 .WithMany(a => a.Comments)
+                .HasForeignKey(c => c.ArticleId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 

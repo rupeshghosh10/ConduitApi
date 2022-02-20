@@ -58,10 +58,11 @@ namespace Conduit.Api
                 };
             });
 
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordManager, PasswordManager>();
             services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ITagService, TagService>();
 
             services.AddHttpContextAccessor();

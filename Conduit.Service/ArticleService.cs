@@ -22,7 +22,6 @@ namespace Conduit.Service
         {
             article.CreatedAt = DateTime.UtcNow;
             article.AuthorId = authorId;
-            article.Slug = $"{article.Title.Replace(" ", "-").ToLower()}";
 
             var tags = await _context.Tags.ToListAsync();
             var articleTags = article.Tags.ToList();
@@ -52,6 +51,8 @@ namespace Conduit.Service
                 article.Slug = $"{article.Title.Replace(" ", "-").ToLower()}-{article.ArticleId}";
                 await _context.SaveChangesAsync();
             }
+
+            article.Author = await _context.Users.FindAsync(authorId);
 
             return article;
         }

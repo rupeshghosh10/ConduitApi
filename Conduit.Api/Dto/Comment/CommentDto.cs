@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Conduit.Api.Dto.User;
 
-namespace Conduit.Core.Models
+namespace Conduit.Api.Dto.Comment
 {
-    public class Comment
+    public class CommentDto
     {
         public int CommentId { get; set; }
 
@@ -15,12 +16,6 @@ namespace Conduit.Core.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int AuthorId { get; set; }
-
-        public virtual User Author { get; set; }
-
-        public int ArticleId { get; set; }
-
-        public virtual Article Article { get; set; }
+        public UserDto Author { get; set; }
     }
 }
