@@ -17,6 +17,7 @@ namespace Conduit.Core.Services
         Task UpdateUser(User userOld, User userNew);
         Task UpdatePassword(User user, string newPassword);
         Task AddFollower(User currentUser, User followedUser);
-        Task DeleteFollower(User currentUser, User followedUser);
+        Task DeleteFollower(int currentUserId, User followedUser);
+        bool IsFollowing(int currentUserId, User followingUser);
     }
 }

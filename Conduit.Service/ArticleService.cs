@@ -61,6 +61,7 @@ namespace Conduit.Service
         {
             return await _context.Articles
                 .Include(x => x.Author)
+                .ThenInclude(x => x.Followers)
                 .Include(x => x.Tags)
                 .FirstOrDefaultAsync(x => x.Slug == slug);
         }
@@ -69,6 +70,7 @@ namespace Conduit.Service
         {
             return await _context.Articles
                 .Include(x => x.Author)
+                .ThenInclude(x => x.Followers)
                 .Include(x => x.Tags)
                 .OrderBy(x => x.ArticleId)
                 .Where(x => x.Tags.Any(x => x.Text.ToLower().StartsWith(tag.ToLower())))

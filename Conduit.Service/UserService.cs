@@ -31,9 +31,9 @@ namespace Conduit.Service
             return user;
         }
 
-        public async Task DeleteFollower(User currentUser, User followedUser)
+        public async Task DeleteFollower(int currentUserId, User followedUser)
         {
-            currentUser.Following.Remove(followedUser);
+            followedUser.Followers.Remove(followedUser.Followers.Single(x => x.UserId == currentUserId));
             await _context.SaveChangesAsync();
         }
 
@@ -50,6 +50,11 @@ namespace Conduit.Service
         public async Task<User> GetByUsername(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public bool IsFollowing(int currentUserId, User followingUser)
+        {
+            return followingUser.Followers.Any(x => x.UserId == currentUserId);
         }
 
         public async Task<bool> IsUniqueEmail(string email)
