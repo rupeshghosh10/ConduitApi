@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Conduit.Api.Dto.User;
+using Conduit.Api.Dto.Profile;
 
 namespace Conduit.Api.Dto.Comment
 {
@@ -16,6 +16,6 @@ namespace Conduit.Api.Dto.Comment
 
         public DateTime? UpdatedAt { get; set; }
 
-        public UserDto Author { get; set; }
+        public ProfileDto Author { get; set; }
     }
 }

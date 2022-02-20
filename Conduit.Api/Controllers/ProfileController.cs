@@ -38,11 +38,7 @@ namespace Conduit.Api.Controllers
 
             try
             {
-                var currentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
-                if (userInDb.Followers.Contains(currentUser))
-                {
-                    profileDto.IsFollowing = true;
-                }
+                profileDto.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), userInDb);
             }
             catch {}
 
@@ -86,14 +82,12 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            var curentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
-
-            if (!curentUser.Following.Contains(followedUser))
+            if (!_userService.IsFollowing(_tokenManager.GetUserId(), followedUser))
             {
                 return Conflict();
             }
 
-            await _userService.DeleteFollower(curentUser, followedUser);
+            await _userService.DeleteFollower(_tokenManager.GetUserId(), followedUser);
 
             return NoContent();
         }

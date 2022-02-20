@@ -20,17 +20,20 @@ namespace Conduit.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IArticleService _articleService;
         private readonly ICommentService _commentService;
+        private readonly IUserService _userService;
 
         public ArticleController(
             ITokenManager tokenManager,
             IMapper mapper,
             IArticleService articleService,
-            ICommentService commentService)
+            ICommentService commentService,
+            IUserService userService)
         {
             _tokenManager = tokenManager;
             _mapper = mapper;
             _articleService = articleService;
             _commentService = commentService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -41,8 +44,17 @@ namespace Conduit.Api.Controllers
             [FromQuery] int limit = 10,
             [FromQuery] int offset = 0)
         {
-            var articles = await _articleService.GetArticles(tag, author, limit, offset);
-            var articlesDto = articles.Select(x => _mapper.Map<ArticleDto>(x));
+            var articlesInDb = (await _articleService.GetArticles(tag, author, limit, offset)).ToList();
+            var articlesDto = articlesInDb.Select(x => _mapper.Map<ArticleDto>(x)).ToList();
+
+            try
+            {
+                for (int i = 0; i < articlesInDb.Count; i++)
+                {
+                    articlesDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articlesInDb[i].Author);
+                }
+            }
+            catch { }
 
             return Ok(articlesDto);
         }
@@ -57,7 +69,14 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<ArticleDto>(articleInDb));
+            var articleDto = _mapper.Map<ArticleDto>(articleInDb);
+            try
+            {
+                articleDto.Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
+            }
+            catch { }
+
+            return Ok(articleDto);
         }
 
         [HttpPost]
@@ -111,8 +130,17 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            var comments = await _commentService.GetComments(slug);
-            var commentsDto = comments.Select(x => _mapper.Map<CommentDto>(x));
+            var commentsInDb = await _commentService.GetComments(slug);
+            var commentsDto = commentsInDb.Select(x => _mapper.Map<CommentDto>(x)).ToList();
+
+            try
+            {
+                for (int i = 0; i < commentsDto.Count; i++)
+                {
+                    commentsDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
+                }
+            }
+            catch { }
 
             return Ok(commentsDto);
         }
@@ -138,7 +166,10 @@ namespace Conduit.Api.Controllers
                 articleInDb.ArticleId,
                 _tokenManager.GetUserId());
 
-            return Ok(_mapper.Map<CommentDto>(comment));
+            var commentDto = _mapper.Map<CommentDto>(comment);
+            commentDto.Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
+
+            return Ok(commentDto);
         }
     }
 }
