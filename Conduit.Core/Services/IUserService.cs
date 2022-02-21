@@ -11,12 +11,13 @@ namespace Conduit.Core.Services
         Task<User> GetByEmail(string email);
         Task<User> GetById(int id);
         Task<User> GetByUsername(string username);
+        Task<User> GetByUsernameWithFollowers(string username);
         Task<User> CreateUser(User user);
         Task<bool> IsUniqueEmail(string email);
         Task<bool> IsUniqueUsername(string username, string exception = "");
         Task UpdateUser(User userOld, User userNew);
         Task UpdatePassword(User user, string newPassword);
-        Task AddFollower(User currentUser, User followedUser);
+        Task AddFollower(int currentUserId, User followedUser);
         Task DeleteFollower(int currentUserId, User followedUser);
         bool IsFollowing(int currentUserId, User followingUser);
     }

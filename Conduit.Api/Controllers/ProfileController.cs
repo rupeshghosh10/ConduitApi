@@ -28,7 +28,7 @@ namespace Conduit.Api.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<ProfileDto>> GetProfile([FromRoute] string username)
         {
-            var userInDb = await _userService.GetByUsername(username);
+            var userInDb = await _userService.GetByUsernameWithFollowers(username);
             if (userInDb == null)
             {
                 return NotFound();
@@ -50,20 +50,20 @@ namespace Conduit.Api.Controllers
         [Route("{username}/follow")]
         public async Task<ActionResult<ProfileDto>> FollowProfile([FromRoute] string username)
         {
-            var followedUser = await _userService.GetByUsername(username);
+            var followedUser = await _userService.GetByUsernameWithFollowers(username);
             if (followedUser == null)
             {
                 return NotFound();
             }
 
-            var curentUser = await _userService.GetByEmail(_tokenManager.GetUserEmail());
+            var currentUserId = _tokenManager.GetUserId();
 
-            if (curentUser.Following.Contains(followedUser))
+            if (_userService.IsFollowing(currentUserId, followedUser) || currentUserId == followedUser.UserId)
             {
                 return Conflict();
             }
 
-            await _userService.AddFollower(curentUser, followedUser);
+            await _userService.AddFollower(currentUserId, followedUser);
 
             var profileDto = _mapper.Map<ProfileDto>(followedUser);
             profileDto.IsFollowing = true;
@@ -76,7 +76,7 @@ namespace Conduit.Api.Controllers
         [Route("{username}/follow")]
         public async Task<ActionResult> UnfollowProfile([FromRoute] string username)
         {
-            var followedUser = await _userService.GetByUsername(username);
+            var followedUser = await _userService.GetByUsernameWithFollowers(username);
             if (followedUser == null)
             {
                 return NotFound();

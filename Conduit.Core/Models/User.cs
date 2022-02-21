@@ -7,6 +7,14 @@ namespace Conduit.Core.Models
 {
     public class User
     {
+        public User()
+        {
+            Articles = new List<Article>();
+            Followers = new List<User>();
+            Following = new List<User>();
+            Comments = new List<Comment>();
+        }
+
         public int UserId { get; set; }
 
         public string Username { get; set; }
@@ -17,12 +25,12 @@ namespace Conduit.Core.Models
 
         public string Password { get; set; }
 
-        public virtual ICollection<Article> Articles { get; set; }
+        public ICollection<Article> Articles { get; set; }
 
-        public virtual ICollection<User> Followers { get; set; }
+        public ICollection<User> Followers { get; set; }
 
-        public virtual ICollection<User> Following { get; set; }
+        public ICollection<User> Following { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

@@ -7,10 +7,15 @@ namespace Conduit.Core.Models
 {
     public class Tag
     {
+        public Tag()
+        {
+            Articles = new List<Article>();
+        }
+
         public int TagId { get; set; }
 
         public string Text { get; set; }
 
-        public virtual ICollection<Article> Articles { get; set; }
+        public ICollection<Article> Articles { get; set; }
     }
 }

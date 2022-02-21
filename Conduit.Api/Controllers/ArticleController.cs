@@ -130,14 +130,14 @@ namespace Conduit.Api.Controllers
                 return NotFound();
             }
 
-            var commentsInDb = await _commentService.GetComments(slug);
+            var commentsInDb = (await _commentService.GetComments(slug)).ToList();
             var commentsDto = commentsInDb.Select(x => _mapper.Map<CommentDto>(x)).ToList();
 
             try
             {
                 for (int i = 0; i < commentsDto.Count; i++)
                 {
-                    commentsDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
+                    commentsDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), commentsInDb[i].Author);
                 }
             }
             catch { }

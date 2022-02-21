@@ -36,7 +36,6 @@ namespace Conduit.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options
-                //.UseLazyLoadingProxies()
                 .UseNpgsql(Configuration.GetConnectionString("ConduitDb"), x => x.MigrationsAssembly("Conduit.Data")));
 
             services.AddControllers();

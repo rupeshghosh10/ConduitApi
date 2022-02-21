@@ -36,6 +36,7 @@ namespace Conduit.Service
         {
             return await _context.Comments
                 .Include(x => x.Author)
+                .ThenInclude(x => x.Followers)
                 .Where(x => x.Article.Slug == slug)
                 .OrderBy(x => x.CommentId)
                 .ToListAsync();

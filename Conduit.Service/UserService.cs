@@ -18,9 +18,11 @@ namespace Conduit.Service
             _context = context;
         }
 
-        public async Task AddFollower(User currentUser, User followedUser)
+        public async Task AddFollower(int currentUserId, User followedUser)
         {
-            currentUser.Following.Add(followedUser);
+            var user = new User { UserId = currentUserId };
+            _context.Users.Attach(user);
+            followedUser.Followers.Add(user);
             await _context.SaveChangesAsync();
         }
 
@@ -50,6 +52,11 @@ namespace Conduit.Service
         public async Task<User> GetByUsername(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public async Task<User> GetByUsernameWithFollowers(string username)
+        {
+            return await _context.Users.Include(x => x.Followers).FirstOrDefaultAsync(x => x.Username == username);
         }
 
         public bool IsFollowing(int currentUserId, User followingUser)

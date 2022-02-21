@@ -7,6 +7,12 @@ namespace Conduit.Core.Models
 {
     public class Article
     {
+        public Article()
+        {
+            Comments = new List<Comment>();
+            Tags = new List<Tag>();
+        }
+
         public int ArticleId { get; set; }
 
         public string Slug { get; set; }
@@ -23,10 +29,10 @@ namespace Conduit.Core.Models
 
         public int AuthorId { get; set; }
 
-        public virtual User Author { get; set; }
+        public User Author { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment> Comments { get; set; }
 
-        public virtual ICollection<Tag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }
