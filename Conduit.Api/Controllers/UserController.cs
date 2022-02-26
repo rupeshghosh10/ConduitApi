@@ -40,10 +40,14 @@ namespace Conduit.Api.Controllers
                 return BadRequest();
             }
 
-            if (await _userService.IsUniqueEmail(userPostDto.Email)
-                || await _userService.IsUniqueUsername(userPostDto.Username))
+            if (await _userService.IsUniqueEmail(userPostDto.Email))
             {
-                return Conflict();
+                return Conflict(new { Name = "email", Message = "Email already exist" });
+            }
+
+            if (await _userService.IsUniqueUsername(userPostDto.Username)) 
+            {
+                return Conflict(new { Name = "username", Message = "Username already exist" });
             }
 
             var user = _mapper.Map<User>(userPostDto);
