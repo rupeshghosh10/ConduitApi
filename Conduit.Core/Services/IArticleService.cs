@@ -12,5 +12,6 @@ namespace Conduit.Core.Services
         Task<ICollection<Article>> GetArticles(string tag, string author, int limit, int offset);
         Task<Article> GetArticle(string slug);
         Task<Article> UpdateArticle(Article oldArticle, Article newArticle);
+        Task DeleteArticle(Article article);
     }
 }

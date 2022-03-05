@@ -57,6 +57,12 @@ namespace Conduit.Service
             return article;
         }
 
+        public async Task DeleteArticle(Article article)
+        {
+            _context.Articles.Remove(article);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Article> GetArticle(string slug)
         {
             return await _context.Articles

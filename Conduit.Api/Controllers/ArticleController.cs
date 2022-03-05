@@ -85,7 +85,7 @@ namespace Conduit.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Unauthorized();
+                return BadRequest();
             }
 
             var article = _mapper.Map<Article>(articlePostDto);
@@ -118,6 +118,27 @@ namespace Conduit.Api.Controllers
             var newArticle = await _articleService.UpdateArticle(articleInDb, _mapper.Map<Article>(articlePutDto));
 
             return Ok(_mapper.Map<ArticleDto>(newArticle));
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("{slug}")]
+        public async Task<ActionResult> DeleteArticle([FromRoute] string slug)
+        {
+            var articleInDb = await _articleService.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (articleInDb.AuthorId != _tokenManager.GetUserId())
+            {
+                return Forbid();
+            }
+
+            await _articleService.DeleteArticle(articleInDb);
+
+            return Ok();
         }
 
         [HttpGet]
@@ -170,6 +191,33 @@ namespace Conduit.Api.Controllers
             commentDto.Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
 
             return Ok(commentDto);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("{slug}/comments/{id}")]
+        public async Task<ActionResult> DeleteComment([FromRoute] string slug, [FromRoute] int id)
+        {
+            var articleInDb = await _articleService.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            var commentInDb = await _commentService.GetComment(id);
+            if (commentInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (commentInDb.AuthorId != _tokenManager.GetUserId())
+            {
+                return Forbid();
+            }
+
+            await _commentService.DeleteComment(commentInDb);
+
+            return NoContent();
         }
     }
 }

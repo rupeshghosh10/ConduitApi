@@ -10,5 +10,7 @@ namespace Conduit.Core.Services
     {
         Task<Comment> AddComment(Comment comment, int articleID, int authorId);
         Task<IEnumerable<Comment>> GetComments(string slug);
+        Task<Comment> GetComment(int id);
+        Task DeleteComment(Comment comment);
     }
 }

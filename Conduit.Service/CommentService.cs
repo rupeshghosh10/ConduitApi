@@ -32,6 +32,19 @@ namespace Conduit.Service
             return comment;
         }
 
+        public async Task DeleteComment(Comment comment)
+        {
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Comment> GetComment(int id)
+        {
+            return await _context.Comments
+                .Include(x => x.Author)
+                .FirstOrDefaultAsync(x => x.CommentId == id);
+        }
+
         public async Task<IEnumerable<Comment>> GetComments(string slug)
         {
             return await _context.Comments
