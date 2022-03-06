@@ -46,8 +46,8 @@ namespace Conduit.Data.Configuration
             builder.HasMany(a => a.Tags)
                 .WithMany(t => t.Articles)
                 .UsingEntity<Dictionary<string, object>>(
-                    x => x.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.NoAction),
-                    x => x.HasOne<Article>().WithMany().HasForeignKey("ArticleId").OnDelete(DeleteBehavior.NoAction),
+                    x => x.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
+                    x => x.HasOne<Article>().WithMany().HasForeignKey("ArticleId").OnDelete(DeleteBehavior.Cascade),
                     x => x.ToTable("ArticleTag"));
 
             builder.ToTable("Articles");
