@@ -41,7 +41,7 @@ namespace Conduit.Api.Controllers
         public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles(
             [FromQuery] string tag = "",
             [FromQuery] string author = "",
-            [FromQuery] int limit = 10,
+            [FromQuery] int limit = 5,
             [FromQuery] int offset = 0)
         {
             var articlesInDb = (await _articleService.GetArticles(tag, author, limit, offset)).ToList();
