@@ -80,7 +80,7 @@ namespace Conduit.Service
                 .Include(x => x.Tags)
                 .OrderBy(x => x.ArticleId)
                 .Where(x => x.Tags.Any(x => x.Text.ToLower().StartsWith(tag.ToLower())))
-                .Where(x => x.Author.Username.ToLower().StartsWith(author.ToLower()))
+                .Where(x => author == "" || x.Author.Username.ToLower() == author.ToLower())
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
