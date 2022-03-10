@@ -6,6 +6,7 @@ using AutoMapper;
 using Conduit.Api.Dto.Profile;
 using Conduit.Core.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
@@ -26,6 +27,8 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpGet("{username}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProfileDto>> GetProfile([FromRoute] string username)
         {
             var userInDb = await _userService.GetByUsernameWithFollowers(username);
@@ -47,6 +50,9 @@ namespace Conduit.Api.Controllers
 
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [Route("{username}/follow")]
         public async Task<ActionResult<ProfileDto>> FollowProfile([FromRoute] string username)
         {
@@ -73,6 +79,9 @@ namespace Conduit.Api.Controllers
 
         [HttpDelete]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [Route("{username}/follow")]
         public async Task<ActionResult> UnfollowProfile([FromRoute] string username)
         {

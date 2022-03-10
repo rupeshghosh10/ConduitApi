@@ -7,6 +7,7 @@ using Conduit.Api.Dto.User;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
@@ -33,6 +34,9 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<UserResponseDto>> Register([FromBody] UserPostDto userPostDto)
         {
             if (!ModelState.IsValid)
@@ -45,7 +49,7 @@ namespace Conduit.Api.Controllers
                 return Conflict(new { Name = "email", Message = "Email already exist" });
             }
 
-            if (await _userService.IsUniqueUsername(userPostDto.Username)) 
+            if (await _userService.IsUniqueUsername(userPostDto.Username))
             {
                 return Conflict(new { Name = "username", Message = "Username already exist" });
             }
@@ -63,6 +67,10 @@ namespace Conduit.Api.Controllers
 
         [HttpPost]
         [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<UserResponseDto>> Login([FromBody] UserLoginDto userLoginDto)
         {
             if (!ModelState.IsValid)
@@ -89,6 +97,7 @@ namespace Conduit.Api.Controllers
 
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<UserDto>> GetUser()
         {
             var user = await _userService.GetByEmail(_tokenManager.GetUserEmail());
@@ -98,6 +107,9 @@ namespace Conduit.Api.Controllers
 
         [HttpPut]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> UpdateUser([FromBody] UserPutDto userPutDto)
         {
             if (!ModelState.IsValid)
@@ -120,6 +132,8 @@ namespace Conduit.Api.Controllers
         [HttpPost]
         [Authorize]
         [Route("resetpassword")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ChangePassword([FromBody] UserResetPasswordDto userResetPasswordDto)
         {
             if (!ModelState.IsValid)
@@ -133,7 +147,7 @@ namespace Conduit.Api.Controllers
             {
                 string newPassword = _passwordManager.GeneratePassword(userResetPasswordDto.NewPassword);
                 await _userService.UpdatePassword(userInDb, newPassword);
-                
+
                 return NoContent();
             }
 

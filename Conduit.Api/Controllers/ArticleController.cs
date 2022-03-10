@@ -8,6 +8,7 @@ using Conduit.Api.Dto.Comment;
 using Conduit.Core.Models;
 using Conduit.Core.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conduit.Api.Controllers
@@ -38,6 +39,7 @@ namespace Conduit.Api.Controllers
 
         [HttpGet]
         [Route("")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles(
             [FromQuery] string tag = "",
             [FromQuery] string author = "",
@@ -61,6 +63,8 @@ namespace Conduit.Api.Controllers
 
         [HttpGet]
         [Route("{slug}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] string slug)
         {
             var articleInDb = await _articleService.GetArticle(slug);
@@ -81,6 +85,8 @@ namespace Conduit.Api.Controllers
 
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ArticleDto>> PostArticle([FromBody] ArticlePostDto articlePostDto)
         {
             if (!ModelState.IsValid)
@@ -97,6 +103,9 @@ namespace Conduit.Api.Controllers
         [HttpPut]
         [Authorize]
         [Route("{slug}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ArticleDto>> PutArticle([FromBody] ArticlePutDto articlePutDto, [FromRoute] string slug)
         {
             if (!ModelState.IsValid)
@@ -123,6 +132,8 @@ namespace Conduit.Api.Controllers
         [HttpDelete]
         [Authorize]
         [Route("{slug}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteArticle([FromRoute] string slug)
         {
             var articleInDb = await _articleService.GetArticle(slug);
@@ -138,11 +149,13 @@ namespace Conduit.Api.Controllers
 
             await _articleService.DeleteArticle(articleInDb);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet]
         [Route("{slug}/comments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<CommentDto>>> GetComments([FromRoute] string slug)
         {
             var articleInDb = await _articleService.GetArticle(slug);
@@ -169,6 +182,9 @@ namespace Conduit.Api.Controllers
         [HttpPost]
         [Authorize]
         [Route("{slug}/comments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CommentDto>> PostComment([FromBody] CommentPostDto commentPostDto, [FromRoute] string slug)
         {
             if (!ModelState.IsValid)
@@ -196,6 +212,8 @@ namespace Conduit.Api.Controllers
         [HttpDelete]
         [Authorize]
         [Route("{slug}/comments/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteComment([FromRoute] string slug, [FromRoute] int id)
         {
             var articleInDb = await _articleService.GetArticle(slug);
