@@ -11,6 +11,7 @@ namespace Conduit.Core.Models
         {
             Comments = new List<Comment>();
             Tags = new List<Tag>();
+            FavoritedUsers = new List<User>();
         }
 
         public int ArticleId { get; set; }
@@ -34,5 +35,7 @@ namespace Conduit.Core.Models
         public ICollection<Comment> Comments { get; set; }
 
         public ICollection<Tag> Tags { get; set; }
+
+        public ICollection<User> FavoritedUsers { get; set; }
     }
 }

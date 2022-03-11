@@ -13,5 +13,8 @@ namespace Conduit.Core.Services
         Task<Article> GetArticle(string slug);
         Task<Article> UpdateArticle(Article oldArticle, Article newArticle);
         Task DeleteArticle(Article article);
+        Task FavoriteArticle(Article article, int currentUserId);
+        bool IsFavourite(Article article, int currentUserId);
+        Task UnFavoriteArticle(Article article, int currentUserId);
     }
 }

@@ -20,5 +20,6 @@ namespace Conduit.Core.Services
         Task AddFollower(int currentUserId, User followedUser);
         Task DeleteFollower(int currentUserId, User followedUser);
         bool IsFollowing(int currentUserId, User followingUser);
+        bool IsFavourite(int currentUserId, Article article);
     }
 }

@@ -63,12 +63,21 @@ namespace Conduit.Service
             await _context.SaveChangesAsync();
         }
 
+        public async Task FavoriteArticle(Article article, int currentUserId)
+        {
+            var userPlaceholder = new User { UserId = currentUserId };
+            _context.Users.Attach(userPlaceholder);
+            article.FavoritedUsers.Add(userPlaceholder);   
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Article> GetArticle(string slug)
         {
             return await _context.Articles
                 .Include(x => x.Author)
                 .ThenInclude(x => x.Followers)
                 .Include(x => x.Tags)
+                .Include(x => x.FavoritedUsers)
                 .FirstOrDefaultAsync(x => x.Slug == slug);
         }
 
@@ -78,12 +87,26 @@ namespace Conduit.Service
                 .Include(x => x.Author)
                 .ThenInclude(x => x.Followers)
                 .Include(x => x.Tags)
+                .Include(x => x.FavoritedUsers)
                 .OrderBy(x => x.ArticleId)
                 .Where(x => x.Tags.Any(x => x.Text.ToLower().StartsWith(tag.ToLower())))
                 .Where(x => author == "" || x.Author.Username.ToLower() == author.ToLower())
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
+        }
+
+        public bool IsFavourite(Article article, int currentUserId)
+        {
+            return article.FavoritedUsers.Any(x => x.UserId == currentUserId);
+        }
+
+        public async Task UnFavoriteArticle(Article article, int currentUserId)
+        {
+            var userPlaceholder = new User { UserId = currentUserId };
+            _context.Users.Attach(userPlaceholder);
+            article.FavoritedUsers.Remove(userPlaceholder);   
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Article> UpdateArticle(Article oldArticle, Article newArticle)

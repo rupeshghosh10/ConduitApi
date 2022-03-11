@@ -13,6 +13,7 @@ namespace Conduit.Core.Models
             Followers = new List<User>();
             Following = new List<User>();
             Comments = new List<Comment>();
+            FavoriteArticles = new List<Article>();
         }
 
         public int UserId { get; set; }
@@ -32,5 +33,7 @@ namespace Conduit.Core.Models
         public ICollection<User> Following { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
+
+        public ICollection<Article> FavoriteArticles { get; set; }
     }
 }

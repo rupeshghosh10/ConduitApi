@@ -50,6 +50,13 @@ namespace Conduit.Data.Configuration
                     x => x.HasOne<Article>().WithMany().HasForeignKey("ArticleId").OnDelete(DeleteBehavior.Cascade),
                     x => x.ToTable("ArticleTag"));
 
+            builder.HasMany(a => a.FavoritedUsers)
+                .WithMany(f => f.FavoriteArticles)
+                .UsingEntity<Dictionary<string, object>>(
+                    x => x.HasOne<User>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade),
+                    x => x.HasOne<Article>().WithMany().HasForeignKey("ArticleId").OnDelete(DeleteBehavior.Cascade),
+                    x => x.ToTable("Favorites"));
+
             builder.ToTable("Articles");
         }
     }

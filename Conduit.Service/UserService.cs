@@ -59,6 +59,11 @@ namespace Conduit.Service
             return await _context.Users.Include(x => x.Followers).FirstOrDefaultAsync(x => x.Username == username);
         }
 
+        public bool IsFavourite(int currentUserId, Article article)
+        {
+           return article.FavoritedUsers.Any(x => x.UserId == currentUserId);
+        }
+
         public bool IsFollowing(int currentUserId, User followingUser)
         {
             return followingUser.Followers.Any(x => x.UserId == currentUserId);
