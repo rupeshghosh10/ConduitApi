@@ -27,7 +27,9 @@ namespace Conduit.Api.Mapping
                 .ReverseMap()
                 .ConstructUsing(x => x.Text);
 
-            CreateMap<Article, ArticleDto>().ReverseMap();
+            CreateMap<Article, ArticleDto>()
+                .ForMember(a => a.FavoritesCount, m => m.MapFrom(x => x.FavoritedUsers.Count))
+                .ReverseMap();
             CreateMap<Article, ArticlePostDto>().ReverseMap();
             CreateMap<Article, ArticlePutDto>().ReverseMap();
 

@@ -54,6 +54,7 @@ namespace Conduit.Api.Controllers
                 for (int i = 0; i < articlesInDb.Count; i++)
                 {
                     articlesDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articlesInDb[i].Author);
+                    articlesDto[i].Favorited = _userService.IsFavourite(_tokenManager.GetUserId(), articlesInDb[i]);
                 }
             }
             catch { }
@@ -77,6 +78,7 @@ namespace Conduit.Api.Controllers
             try
             {
                 articleDto.Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articleInDb.Author);
+                articleDto.Favorited = _userService.IsFavourite(_tokenManager.GetUserId(), articleInDb);
             }
             catch { }
 
@@ -156,6 +158,7 @@ namespace Conduit.Api.Controllers
         [Route("{slug}/comments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ApiExplorerSettings(GroupName = "Comments")]
         public async Task<ActionResult<IEnumerable<CommentDto>>> GetComments([FromRoute] string slug)
         {
             var articleInDb = await _articleService.GetArticle(slug);
@@ -185,6 +188,7 @@ namespace Conduit.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ApiExplorerSettings(GroupName = "Comments")]
         public async Task<ActionResult<CommentDto>> PostComment([FromBody] CommentPostDto commentPostDto, [FromRoute] string slug)
         {
             if (!ModelState.IsValid)
@@ -214,6 +218,7 @@ namespace Conduit.Api.Controllers
         [Route("{slug}/comments/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ApiExplorerSettings(GroupName = "Comments")]
         public async Task<ActionResult> DeleteComment([FromRoute] string slug, [FromRoute] int id)
         {
             var articleInDb = await _articleService.GetArticle(slug);
@@ -234,6 +239,51 @@ namespace Conduit.Api.Controllers
             }
 
             await _commentService.DeleteComment(commentInDb);
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("{slug}/favorite")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ApiExplorerSettings(GroupName = "Favorites")]
+        public async Task<ActionResult> FavoriteArticle([FromRoute] string slug)
+        {
+            var articleInDb = await _articleService.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (_articleService.IsFavourite(articleInDb, _tokenManager.GetUserId()))
+            {
+                return Conflict();
+            }
+
+            await _articleService.FavoriteArticle(articleInDb, _tokenManager.GetUserId());
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("{slug}/favorite")]
+        [ApiExplorerSettings(GroupName = "Favorites")]
+        public async Task<ActionResult> DeleteFavoriteArticle([FromRoute] string slug) 
+        {
+            var articleInDb = await _articleService.GetArticle(slug);
+            if (articleInDb == null)
+            {
+                return NotFound();
+            }
+
+            if (!_articleService.IsFavourite(articleInDb, _tokenManager.GetUserId()))
+            {
+                return Conflict();
+            }
 
             return NoContent();
         }

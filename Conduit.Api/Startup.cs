@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,6 +81,16 @@ namespace Conduit.Api
                     BearerFormat = "JWT",
                     Description = "JWT Authorization header using the Bearer scheme."
                 });
+                c.TagActionsBy(api => 
+                {
+                    if (api.GroupName != null) 
+                    {
+                        return new[] { api.GroupName };
+                    }
+                    var contollerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    return new[] { contollerActionDescriptor.ControllerName };
+                });
+                c.DocInclusionPredicate((name, api) => true);
             });
         }
 

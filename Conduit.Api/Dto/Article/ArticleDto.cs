@@ -22,6 +22,10 @@ namespace Conduit.Api.Dto.Article
 
         public ProfileDto Author { get; set; }
 
+        public bool Favorited { get; set; }
+
+        public int FavoritesCount { get; set; }
+
         public virtual IEnumerable<string> Tags { get; set; }
     }
 }
