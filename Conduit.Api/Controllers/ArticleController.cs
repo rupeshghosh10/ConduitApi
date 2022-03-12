@@ -285,6 +285,8 @@ namespace Conduit.Api.Controllers
                 return Conflict();
             }
 
+            await _articleService.UnFavoriteArticle(articleInDb, _tokenManager.GetUserId());
+
             return NoContent();
         }
     }

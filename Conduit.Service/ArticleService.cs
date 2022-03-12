@@ -65,9 +65,9 @@ namespace Conduit.Service
 
         public async Task FavoriteArticle(Article article, int currentUserId)
         {
-            var userPlaceholder = new User { UserId = currentUserId };
+            var userPlaceholder = _context.Users.Local.FirstOrDefault(x => x.UserId == currentUserId) ?? new User { UserId = currentUserId };
             _context.Users.Attach(userPlaceholder);
-            article.FavoritedUsers.Add(userPlaceholder);   
+            article.FavoritedUsers.Add(userPlaceholder);
             await _context.SaveChangesAsync();
         }
 
@@ -103,9 +103,9 @@ namespace Conduit.Service
 
         public async Task UnFavoriteArticle(Article article, int currentUserId)
         {
-            var userPlaceholder = new User { UserId = currentUserId };
+            var userPlaceholder = _context.Users.Local.FirstOrDefault(x => x.UserId == currentUserId) ?? new User { UserId = currentUserId };
             _context.Users.Attach(userPlaceholder);
-            article.FavoritedUsers.Remove(userPlaceholder);   
+            article.FavoritedUsers.Remove(userPlaceholder);
             await _context.SaveChangesAsync();
         }
 
