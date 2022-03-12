@@ -81,7 +81,7 @@ namespace Conduit.Service
                 .FirstOrDefaultAsync(x => x.Slug == slug);
         }
 
-        public async Task<ICollection<Article>> GetArticles(string tag, string author, int limit, int offset)
+        public async Task<ICollection<Article>> GetArticles(string tag, string author, string favorited, int limit, int offset)
         {
             return await _context.Articles
                 .Include(x => x.Author)
@@ -91,6 +91,7 @@ namespace Conduit.Service
                 .OrderBy(x => x.ArticleId)
                 .Where(x => x.Tags.Any(x => x.Text.ToLower().StartsWith(tag.ToLower())))
                 .Where(x => author == "" || x.Author.Username.ToLower() == author.ToLower())
+                .Where(x => favorited == "" || x.FavoritedUsers.Any(x => x.Username == favorited))
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();

@@ -43,10 +43,11 @@ namespace Conduit.Api.Controllers
         public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles(
             [FromQuery] string tag = "",
             [FromQuery] string author = "",
+            [FromQuery] string favorited = "",
             [FromQuery] int limit = 5,
             [FromQuery] int offset = 0)
         {
-            var articlesInDb = (await _articleService.GetArticles(tag, author, limit, offset)).ToList();
+            var articlesInDb = (await _articleService.GetArticles(tag, author, favorited, limit, offset)).ToList();
             var articlesDto = articlesInDb.Select(x => _mapper.Map<ArticleDto>(x)).ToList();
 
             try
