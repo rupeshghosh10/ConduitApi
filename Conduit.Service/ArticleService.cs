@@ -105,7 +105,7 @@ namespace Conduit.Service
                 .Include(x => x.Tags)
                 .Include(x => x.FavoritedUsers)
                 .OrderBy(x => x.ArticleId)
-                .Where(x => x.FavoritedUsers.Any(y => y.UserId == currentUserId))
+                .Where(x => x.Author.Followers.Any(y => y.UserId == currentUserId))
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();

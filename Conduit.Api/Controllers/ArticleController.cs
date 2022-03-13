@@ -71,8 +71,16 @@ namespace Conduit.Api.Controllers
             [FromQuery] int limit = 5,
             [FromQuery] int offset = 0)
         {
-            var articles = await _articleService.GetArticlesFeed(limit, offset, _tokenManager.GetUserId());
-            return Ok(articles.Select(x => _mapper.Map<ArticleDto>(x)));
+            var articlesInDb = (await _articleService.GetArticlesFeed(limit, offset, _tokenManager.GetUserId())).ToList();
+            var articlesDto = articlesInDb.Select(x => _mapper.Map<ArticleDto>(x)).ToList();
+
+            for (int i = 0; i < articlesInDb.Count; i++)
+            {
+                articlesDto[i].Author.IsFollowing = _userService.IsFollowing(_tokenManager.GetUserId(), articlesInDb[i].Author);
+                articlesDto[i].Favorited = _userService.IsFavourite(_tokenManager.GetUserId(), articlesInDb[i]);
+            }
+
+            return Ok(articlesDto);
         }
 
         [HttpGet]
@@ -285,7 +293,7 @@ namespace Conduit.Api.Controllers
         [Authorize]
         [Route("{slug}/favorite")]
         [ApiExplorerSettings(GroupName = "Favorites")]
-        public async Task<ActionResult> DeleteFavoriteArticle([FromRoute] string slug) 
+        public async Task<ActionResult> DeleteFavoriteArticle([FromRoute] string slug)
         {
             var articleInDb = await _articleService.GetArticle(slug);
             if (articleInDb == null)
