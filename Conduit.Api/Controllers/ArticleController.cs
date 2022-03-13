@@ -64,6 +64,18 @@ namespace Conduit.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
+        [Route("feed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticlesFeed(
+            [FromQuery] int limit = 5,
+            [FromQuery] int offset = 0)
+        {
+            var articles = await _articleService.GetArticlesFeed(limit, offset, _tokenManager.GetUserId());
+            return Ok(articles.Select(x => _mapper.Map<ArticleDto>(x)));
+        }
+
+        [HttpGet]
         [Route("{slug}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

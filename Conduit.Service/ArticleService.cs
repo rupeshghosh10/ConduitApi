@@ -97,6 +97,20 @@ namespace Conduit.Service
                 .ToListAsync();
         }
 
+        public async Task<ICollection<Article>> GetArticlesFeed(int limit, int offset, int currentUserId)
+        {
+            return await _context.Articles
+                .Include(x => x.Author)
+                .ThenInclude(x => x.Followers)
+                .Include(x => x.Tags)
+                .Include(x => x.FavoritedUsers)
+                .OrderBy(x => x.ArticleId)
+                .Where(x => x.FavoritedUsers.Any(y => y.UserId == currentUserId))
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+        }
+
         public bool IsFavourite(Article article, int currentUserId)
         {
             return article.FavoritedUsers.Any(x => x.UserId == currentUserId);
