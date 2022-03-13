@@ -33,7 +33,7 @@ namespace Conduit.Service
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Expires = DateTime.UtcNow.AddHours(6),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = ceredential,
                 Subject = new ClaimsIdentity(new[]
                 {

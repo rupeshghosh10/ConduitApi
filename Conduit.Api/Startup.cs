@@ -37,8 +37,8 @@ namespace Conduit.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options
-                .UseNpgsql(Configuration.GetConnectionString("ConduitDb"),
-                x => x.MigrationsAssembly("Conduit.Data").UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)));
+                .UseNpgsql(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? Configuration.GetConnectionString("ConduitDb") : GetHerokuConnectionString(), 
+                    x => x.MigrationsAssembly("Conduit.Data").UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery)));
 
             services.AddControllers();
 
@@ -81,9 +81,9 @@ namespace Conduit.Api
                     BearerFormat = "JWT",
                     Description = "JWT Authorization header using the Bearer scheme."
                 });
-                c.TagActionsBy(api => 
+                c.TagActionsBy(api =>
                 {
-                    if (api.GroupName != null) 
+                    if (api.GroupName != null)
                     {
                         return new[] { api.GroupName };
                     }
@@ -117,6 +117,15 @@ namespace Conduit.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private string GetHerokuConnectionString()
+        {
+            var databaseUri = new Uri(Environment.GetEnvironmentVariable("DATABASE_URL"));
+            string db = databaseUri.LocalPath.TrimStart('/');
+            string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+            return $"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};Port={databaseUri.Port};Database={db};Pooling=true;SSL Mode=Require;Trust Server Certificate=True;";
         }
     }
 }

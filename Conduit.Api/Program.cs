@@ -21,7 +21,10 @@ namespace Conduit.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    //webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
+                    if (!(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"))
+                    {
+                        webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
+                    }
                     webBuilder.UseStartup<Startup>();
                 });
     }
