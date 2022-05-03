@@ -10,10 +10,10 @@ Frontend Project: https://github.com/RupeshGhosh10/ConduitWeb/
 - PostgreSql
 
 ### How it works
-- AutoMapper for mapping DTO with Domain Model.
-- EntityFramework for ORM.
-- JWT Authentication.
-- Swagger via Swashbuckle.AspNetCore.
+- AutoMapper for mapping DTO with Domain Model
+- EntityFramework for ORM
+- JWT Authentication
+- Swagger via Swashbuckle.AspNetCore
 
 ### How to use
 To clone and run this application, you'll need git, dotnet cli and postgresql installed on your computer. From your command line:
