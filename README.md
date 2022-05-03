@@ -3,6 +3,8 @@
 
 Conduit is a fullstack blogging application. This was created to demonstrate a fully fledged fullstack application built with ASP.NET Core (with feature orientation) including CRUD operations, authentication, routing and pagination.
 
+Frontend Project: https://github.com/RupeshGhosh10/ConduitWeb/
+
 ### Build With
 - ASP.NET Web API
 - PostgreSql
